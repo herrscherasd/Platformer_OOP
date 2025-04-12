@@ -126,15 +126,6 @@ inline int player_level_scores[LEVEL_COUNT];
 inline const int MAX_PLAYER_LIVES = 3;
 inline int player_lives = MAX_PLAYER_LIVES;
 
-/* Enemy data */
-
-struct Enemy {
-    Vector2 pos;
-    bool is_looking_right;
-};
-
-inline std::vector<Enemy> enemies;
-
 /* Graphic Metrics */
 
 // UI
@@ -346,7 +337,7 @@ void move_player_horizontally(float delta);
 void update_player();
 void update_player_gravity();
 
-// ENEMY_H
+// ENEMY_CPP
 
 void spawn_enemies();
 
