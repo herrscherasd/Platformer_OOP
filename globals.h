@@ -112,20 +112,6 @@ inline const float ENEMY_MOVEMENT_SPEED  = 0.07f;
 inline const float BOUNCE_OFF_ENEMY      = 0.1f;
 inline const float GRAVITY_FORCE         = 0.01f;
 
-/* Player data */
-
-inline float player_y_velocity = 0;
-inline Vector2 player_pos;
-
-inline bool is_player_on_ground;
-inline bool is_looking_forward;
-inline bool is_moving;
-
-inline int player_level_scores[LEVEL_COUNT];
-
-inline const int MAX_PLAYER_LIVES = 3;
-inline int player_lives = MAX_PLAYER_LIVES;
-
 /* Graphic Metrics */
 
 // UI
@@ -337,7 +323,7 @@ void move_player_horizontally(float delta);
 void update_player();
 void update_player_gravity();
 
-// ENEMY_CPP
+// ENEMY_H
 
 void spawn_enemies();
 
