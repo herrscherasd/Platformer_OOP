@@ -20,7 +20,11 @@ void derive_graphics_metrics_from_loaded_level() {
     screen_size.x  = static_cast<float>(GetScreenWidth());
     screen_size.y = static_cast<float>(GetScreenHeight());
 
-    cell_size = screen_size.y / static_cast<float>(LEVELS[level_index].rows);
+    if (current_level) {
+        cell_size = screen_size.y / static_cast<float>(current_level->rows());
+    } else {
+        cell_size = 50.0f;
+    }
     screen_scale = std::min(screen_size.x, screen_size.y) / SCREEN_SCALE_DIVISOR;
 
     // Parallax background setup
@@ -38,7 +42,7 @@ void derive_graphics_metrics_from_loaded_level() {
 
 void draw_parallax_background() {
     // First uses the player's position
-    float initial_offset      = -(player.position.x * PARALLAX_PLAYER_SCROLLING_SPEED + game_frame * PARALLAX_IDLE_SCROLLING_SPEED);
+    float initial_offset      = -(Player::position.x * PARALLAX_PLAYER_SCROLLING_SPEED + game_frame * PARALLAX_IDLE_SCROLLING_SPEED);
 
     // Calculate offsets for different layers
     float background_offset   = initial_offset;
@@ -74,7 +78,7 @@ void draw_game_overlay() {
     slight_vertical_offset *= screen_scale;
 
     // Hearts
-    for (int i = 0; i < player.lives; i++) {
+    for (int i = 0; i < Player::lives; i++) {
         const float SPACE_BETWEEN_HEARTS = 4.0f * screen_scale;
         draw_image(heart_image, {ICON_SIZE * i + SPACE_BETWEEN_HEARTS, slight_vertical_offset}, ICON_SIZE);
     }
@@ -92,21 +96,25 @@ void draw_game_overlay() {
 }
 
 void draw_level() {
+    if (!current_level) return;
     // Move the x-axis' center to the middle of the screen
     horizontal_shift = (screen_size.x - cell_size) / 2;
 
-    for (size_t row = 0; row < current_level.rows; ++row) {
-        for (size_t column = 0; column < current_level.columns; ++column) {
+    size_t level_rows = current_level->rows();
+    size_t level_columns = current_level->columns();
+
+    for (size_t row = 0; row < level_rows; ++row) {
+        for (size_t column = 0; column < level_columns; ++column) {
 
             Vector2 pos = {
                     // Move the level to the left as the player advances to the right,
                     // shifting to the left to allow the player to be centered later
-                    (static_cast<float>(column) - player.position.x) * cell_size + horizontal_shift,
+                    (static_cast<float>(column) - Player::position.x) * cell_size + horizontal_shift,
                     static_cast<float>(row) * cell_size
             };
 
             // Draw the level itself
-            char cell = get_level_cell(row, column);
+            char cell = current_level->get_cell(row, column);
             switch (cell) {
                 case WALL:
                     draw_image(wall_image, pos, cell_size);
@@ -139,7 +147,7 @@ void draw_player() {
     // Shift the camera to the center of the screen to allow to see what is in front of the player
     Vector2 pos = {
             horizontal_shift,
-            player.position.y * cell_size
+            Player::position.y * cell_size
     };
 
     // Pick an appropriate sprite for the player
@@ -166,7 +174,7 @@ void draw_enemies() {
         horizontal_shift = (screen_size.x - cell_size) / 2;
         Vector2 enemy_pos = enemy.getPosition();
         Vector2 pos = {
-                (enemy_pos.x - player.position.x) * cell_size + horizontal_shift,
+                (enemy_pos.x - Player::position.x) * cell_size + horizontal_shift,
                 enemy_pos.y * cell_size
         };
 

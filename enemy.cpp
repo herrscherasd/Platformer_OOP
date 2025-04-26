@@ -1,5 +1,7 @@
 #include "enemy.h"
 
+#include "level.h"
+
 std::vector<Enemy> enemies;
 
 Enemy::Enemy(Vector2 position, bool lookingRight)
@@ -47,12 +49,15 @@ Vector2 Enemy::getPosition() const {
 void spawn_enemies() {
     enemies.clear();
 
-    for (size_t row = 0; row < current_level.rows; ++row) {
-        for (size_t column = 0; column < current_level.columns; ++column) {
-            char cell = get_level_cell(row, column);
+    size_t level_rows = current_level->rows();
+    size_t level_columns = current_level->columns();
+
+    for (size_t row = 0; row < level_rows; ++row) {
+        for (size_t column = 0; column < level_columns; ++column) {
+            char cell = current_level->get_cell(row, column);
             if (cell == ENEMY) {
                 enemies.emplace_back(Vector2{(float)column, (float)row});
-                set_level_cell(row, column, AIR);
+                current_level->set_cell(row, column, AIR);
             }
         }
     }

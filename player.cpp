@@ -1,5 +1,7 @@
 #include "player.h"
 
+#include "level.h"
+
 
 float Player::y_velocity = 0;
 Vector2 Player::position = {0, 0};
@@ -41,14 +43,16 @@ int Player::getTotalScore() const {
 }
 
 void Player::spawn() {
+    size_t level_rows = current_level->rows();
+    size_t level_columns = current_level->columns();
     y_velocity = 0;
-    for (size_t row = 0; row < current_level.rows; ++row) {
-        for (size_t col = 0; col < current_level.columns; ++col) {
-            char cell = get_level_cell(row, col);
+    for (size_t row = 0; row < level_rows; ++row) {
+        for (size_t col = 0; col < level_columns; ++col) {
+            char cell = current_level->get_cell(row, col);
             if (cell == PLAYER) {
                 position.x = col;
                 position.y = row;
-                set_level_cell(row, col, AIR);
+                current_level->set_cell(row, col, AIR);
                 return;
             }
         }
@@ -95,6 +99,7 @@ bool Player::isCollidingWithEnemies(Vector2 pos) {
 
 void Player::update() {
     updateGravity();
+    size_t level_rows = current_level->rows();
 
     if (is_colliding(position, COIN)) {
         get_collider(position, COIN) = AIR;
@@ -118,7 +123,7 @@ void Player::update() {
         if (timer >= 0) timer--;
     }
 
-    if (is_colliding(position, SPIKE) || position.y > current_level.rows) {
+    if (is_colliding(position, SPIKE) || position.y > level_rows) {
         kill();
     }
 
