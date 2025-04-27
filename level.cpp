@@ -82,14 +82,19 @@ bool is_inside_level(int row, int column) {
 }
 
 bool is_colliding(Vector2 pos, char look_for) {
-        Rectangle player_hitbox = {pos.x, pos.y, 1.0f, 1.0f};
+        Rectangle entity_hitbox = {pos.x, pos.y, 1.0f, 1.0f};
 
+        // Scan the adjacent area in the level to look for a match in collision
         for (int row = pos.y - 1; row < pos.y + 1; ++row) {
                 for (int column = pos.x - 1; column < pos.x + 1; ++column) {
-                        if (is_inside_level(row, column) &&
-                            current_level->get_cell(row, column) == look_for) {
-                                return true;
-                            }
+                        // Check if the cell is out-of-bounds
+                        if (!is_inside_level(row, column)) continue;
+                        if (current_level->get_cell(row, column) == look_for) {
+                                Rectangle block_hitbox = {(float) column, (float) row, 1.0f, 1.0f};
+                                if (CheckCollisionRecs(entity_hitbox, block_hitbox)) {
+                                        return true;
+                                }
+                        }
                 }
         }
         return false;
