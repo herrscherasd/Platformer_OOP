@@ -14,20 +14,22 @@ public:
     Level() = default;
     Level(size_t rows, size_t columns, const std::vector<char>& data);
 
-    size_t rows() const;
-    size_t columns() const;
-    const std::vector<char>& data() const { return m_data; }
+    [[nodiscard]] size_t rows() const;
+    [[nodiscard]] size_t columns() const;
+    [[nodiscard]] const std::vector<char>& data() const { return m_data; }
 
-    bool is_inside(int row, int column) const;
+    [[nodiscard]] bool is_inside(int row, int column) const;
 
-    char get_cell(size_t row, size_t column) const;
+    [[nodiscard]] char get_cell(size_t row, size_t column) const;
     char& get_cell(size_t row, size_t column);
     void set_cell(size_t row, size_t column, char chr);
-
-    void load_from_data(size_t rows, size_t columns, const char* data);
-
 };
 
+std::vector<char> decode_rll_line(const std::string& line);
+bool load_levels_from_file(const std::string& filename);
+void load_levels();
+void init_levels();
+void cleanup_levels();
 
 bool is_inside_level(int row, int column);
 bool is_colliding(Vector2 pos, char look_for = '#');

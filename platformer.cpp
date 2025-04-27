@@ -127,10 +127,10 @@ int main() {
     SetTargetFPS(60);
     HideCursor();
 
+    init_levels();
     load_fonts();
     load_images();
     load_sounds();
-    load_level();
 
     while (!WindowShouldClose()) {
         BeginDrawing();
